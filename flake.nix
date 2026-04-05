@@ -1,0 +1,30 @@
+{
+  description = "Nixpkgs-Personal";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  };
+
+  outputs = { self, nixpkgs }: let 
+    pkgs = nixpkgs.legacyPackages.x86_64-linux;
+    lib = pkgs.lib;
+    
+    entries = lib.filterAttrs
+    (name: type: type == "directory" ||
+      (type == "regular" && builtins.match ".*\\.nix" name != null))
+    (builtins.readDir ./packages);
+
+    toPackage = name: type:
+      if type == "regular"
+        then pkgs.callPackage ./packages/${name} {}
+        else pkgs.callPackage ./packages/${name}/${name}.nix {};
+
+    packageSet = builtins.listToAttrs (map (name: {
+      name = builtins.replaceStrings [ ".nix" ] [ "" ] name;
+      value = toPackage name (entries.${name});
+    }) (builtins.attrNames entries));
+
+  in {
+    packages.x86_64-linux = packageSet;
+  };
+}
