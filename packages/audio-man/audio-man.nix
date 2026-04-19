@@ -11,6 +11,11 @@
   gjs,
 }:
 
+let
+  system = stdenv.hostPlatform.system;
+  agsPkg = ags.packages.${system}.default;
+in
+
 stdenv.mkDerivation (finalAttrs: {
   pname = "audio-man";
   version = "unstable";
@@ -18,14 +23,14 @@ stdenv.mkDerivation (finalAttrs: {
   src = fetchFromGitHub {
     owner = "Daniel36191";
     repo = "audio-man";
-    rev = "main";
-    hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    rev = "e41730ecf1480500517f3c3a657c6348c610594c";
+    hash = "sha256-pEILQzSnLeg7hhcafeJHcDaC1FORWXpZgxC1z+eyenc=";
   };
 
   nativeBuildInputs = [
     wrapGAppsHook3
     gobject-introspection
-    ags.packages.${stdenv.hostPlatform.system}.default
+    agsPkg
   ];
 
   buildInputs = [

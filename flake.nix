@@ -3,28 +3,40 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    ags.url = "github:aylur/ags";
+    ags.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs }: let 
-    pkgs = nixpkgs.legacyPackages.x86_64-linux;
-    lib = pkgs.lib;
-    
-    entries = lib.filterAttrs
-    (name: type: type == "directory" ||
-      (type == "regular" && builtins.match ".*\\.nix" name != null))
-    (builtins.readDir ./packages);
+  outputs =
+    {
+      self,
+      nixpkgs,
+      ags,
+    }:
+    let
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      lib = pkgs.lib;
 
-    toPackage = name: type:
-      if type == "regular"
-        then pkgs.callPackage ./packages/${name} {}
-        else pkgs.callPackage ./packages/${name}/${name}.nix {};
+      entries = lib.filterAttrs (
+        name: type: type == "directory" || (type == "regular" && builtins.match ".*\\.nix" name != null)
+      ) (builtins.readDir ./packages);
 
-    packageSet = builtins.listToAttrs (map (name: {
-      name = builtins.replaceStrings [ ".nix" ] [ "" ] name;
-      value = toPackage name (entries.${name});
-    }) (builtins.attrNames entries));
+      toPackage =
+        name: type:
+        if type == "regular" then
+          pkgs.callPackage ./packages/${name} { inherit ags; }
+        else
+          pkgs.callPackage ./packages/${name}/${name}.nix { inherit ags; };
 
-  in {
-    packages.x86_64-linux = packageSet;
-  };
+      packageSet = builtins.listToAttrs (
+        map (name: {
+          name = builtins.replaceStrings [ ".nix" ] [ "" ] name;
+          value = toPackage name (entries.${name});
+        }) (builtins.attrNames entries)
+      );
+
+    in
+    {
+      packages.x86_64-linux = packageSet;
+    };
 }
