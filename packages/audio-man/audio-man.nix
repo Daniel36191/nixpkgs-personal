@@ -14,6 +14,8 @@
 let
   system = stdenv.hostPlatform.system;
   agsPkg = ags.packages.${system}.default;
+  astal4 = ags.packages.${system}.astal4;
+  astal3 = ags.packages.${system}.astal3;
 in
 
 stdenv.mkDerivation (finalAttrs: {
@@ -37,6 +39,8 @@ stdenv.mkDerivation (finalAttrs: {
     libadwaita
     libsoup_3
     gjs
+    astal4
+    astal3
   ];
 
   installPhase = ''
@@ -48,6 +52,16 @@ stdenv.mkDerivation (finalAttrs: {
     ags bundle app.ts $out/bin/audio-man -d "SRC='$out/share'"
 
     runHook postInstall
+  '';
+
+  postFixup = ''
+    wrapProgram $out/bin/audio-man \
+      --prefix GI_TYPELIB_PATH : "${
+        lib.makeSearchPathOutput "lib" "girepository-1.0" [
+          astal4
+          astal3
+        ]
+      }"
   '';
 
   passthru.updateScript = gitUpdater {
