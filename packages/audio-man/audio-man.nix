@@ -24,7 +24,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "Daniel36191";
     repo = "audio-man";
     rev = "e41730ecf1480500517f3c3a657c6348c610594c";
-    hash = "sha256-pEILQzSnLeg7hhcafeJHcDaC1FORWXpZgxC1z+eyenc=";
+    hash = "sha256-0zkfh4cPolNFE8sDoZt9s0YdwMQHqS5wmUVBW1YbDaU=";
   };
 
   nativeBuildInputs = [
