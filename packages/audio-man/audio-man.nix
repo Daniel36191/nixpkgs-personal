@@ -2,7 +2,6 @@
   lib,
   stdenv,
   fetchFromGitHub,
-  gitUpdater,
   wrapGAppsHook3,
   gobject-introspection,
   ags,
@@ -64,13 +63,7 @@ stdenv.mkDerivation (finalAttrs: {
       }"
   '';
 
-  passthru.updateScript = gitUpdater {
-    rev-prefix = "v";
-  };
-
   meta = {
-    description = "Audio manager widget for AGS";
-    homepage = "https://github.com/TS-design-lab/audio-man";
     license = [ lib.licenses.mit ];
     platforms = lib.platforms.linux;
   };
