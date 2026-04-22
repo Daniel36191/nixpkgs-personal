@@ -42,13 +42,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "bespokesynth";
-  version = "e4ac1c8f023b7dcd59ceab964a83353e648bd416";
+  version = "3833df302edd3ab89af1a276efc472f81b76fda9";
 
   src = fetchFromGitHub {
     owner = "BespokeSynth";
     repo = "bespokesynth";
     rev = "${finalAttrs.version}";
-    hash = "sha256-BwmI7UEMFMvsUXX7kxIRv6M6Mn5+xKpL+SYXpvAswTg=";
+    hash = "sha256-aAtoP3xXN3YOz99bc2+JVQ1azhQSOuYkK8TtR8ha11U=";
     fetchSubmodules = true;
   };
 
@@ -68,14 +68,13 @@ stdenv.mkDerivation (finalAttrs: {
 
   cmakeBuildType = "Release";
 
-  cmakeFlags =
-    [
-      (lib.cmakeBool "BESPOKE_SYSTEM_PYBIND11" true)
-      (lib.cmakeBool "BESPOKE_SYSTEM_JSONCPP" true)
-    ]
-    ++ lib.optionals enableVST2 [
-      (lib.cmakeFeature "BESPOKE_VST2_SDK_LOCATION" "${vst2-sdk}")
-    ];
+  cmakeFlags = [
+    (lib.cmakeBool "BESPOKE_SYSTEM_PYBIND11" true)
+    (lib.cmakeBool "BESPOKE_SYSTEM_JSONCPP" true)
+  ]
+  ++ lib.optionals enableVST2 [
+    (lib.cmakeFeature "BESPOKE_VST2_SDK_LOCATION" "${vst2-sdk}")
+  ];
 
   strictDeps = true;
 
@@ -87,45 +86,44 @@ stdenv.mkDerivation (finalAttrs: {
     ninja
   ];
 
-  buildInputs =
-    [
-      jsoncpp
-      # library & headers
-      (python3.withPackages (
-        ps: with ps; [
-          pybind11
-        ]
-      ))
-    ]
-    ++ lib.optionals stdenv.hostPlatform.isLinux [
-      # List obtained from https://github.com/BespokeSynth/BespokeSynth/blob/main/azure-pipelines.yml
-      libX11
-      libXrandr
-      libXinerama
-      libXext
-      libXcursor
-      libXScrnSaver
-      curl
-      gtk3
-      webkitgtk_4_1
-      freetype
-      libGL
-      libusb1
-      alsa-lib
-      libjack2
-      zenity
-      alsa-tools
-      libxcb
-      xcbutil
-      libxkbcommon
-      xcbutilkeysyms
-      xcb-util-cursor
-      pcre
-      mount
-    ]
-    ++ lib.optionals stdenv.hostPlatform.isDarwin [
-      apple-sdk_11
-    ];
+  buildInputs = [
+    jsoncpp
+    # library & headers
+    (python3.withPackages (
+      ps: with ps; [
+        pybind11
+      ]
+    ))
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [
+    # List obtained from https://github.com/BespokeSynth/BespokeSynth/blob/main/azure-pipelines.yml
+    libX11
+    libXrandr
+    libXinerama
+    libXext
+    libXcursor
+    libXScrnSaver
+    curl
+    gtk3
+    webkitgtk_4_1
+    freetype
+    libGL
+    libusb1
+    alsa-lib
+    libjack2
+    zenity
+    alsa-tools
+    libxcb
+    xcbutil
+    libxkbcommon
+    xcbutilkeysyms
+    xcb-util-cursor
+    pcre
+    mount
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    apple-sdk_11
+  ];
 
   postInstall =
     if stdenv.hostPlatform.isDarwin then
@@ -169,7 +167,7 @@ stdenv.mkDerivation (finalAttrs: {
   };
 
   meta = {
-    description = "Software modular synth with controllers support, scripting and VST";
+    description = "Software modular synth with controllers support, scripting and VST (beta)";
     homepage = "https://www.bespokesynth.com/";
     license = [ lib.licenses.gpl3Plus ];
     maintainers = with lib.maintainers; [
@@ -177,6 +175,7 @@ stdenv.mkDerivation (finalAttrs: {
       tobiasBora
       OPNA2608
       PowerUser64
+      Daniel36191
     ];
     mainProgram = "BespokeSynth";
     platforms = lib.platforms.all;

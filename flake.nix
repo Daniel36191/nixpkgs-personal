@@ -12,8 +12,11 @@
       ags,
     }:
     let
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
-      system = pkgs.system;
+      pkgs = import nixpkgs {
+        system = "x86_64-linux";
+        config.allowUnfree = true;
+      };
+      system = "x86_64-linux";
       agsPkgs = ags.packages.${system};
     in
     {
@@ -21,7 +24,9 @@
         anycubicSlicerNext = pkgs.callPackage ./packages/anycubicSlicerNext.nix { };
         bespoke-synth = pkgs.callPackage ./packages/bespoke-synth/bespoke-synth.nix { };
         chataigne = pkgs.callPackage ./packages/chataigne/chataigne.nix { };
-        glfw-minecraft-wayland = pkgs.callPackage ./packages/glfw-minecraft-wayland/glfw-minecraft-wayland.nix { };
+        glfw-minecraft-wayland =
+          pkgs.callPackage ./packages/glfw-minecraft-wayland/glfw-minecraft-wayland.nix
+            { };
         lulzbot-cura = pkgs.callPackage ./packages/lulzbot-cura.nix { };
         orca-beta = pkgs.callPackage ./packages/orca-beta/orca-beta.nix { };
         proton-vkvr = pkgs.callPackage ./packages/proton-vkvr.nix { };
