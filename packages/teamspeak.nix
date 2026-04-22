@@ -26,7 +26,12 @@
   pipewire,
   udev,
   libGL,
-  xorg,
+  libX11,
+  libXScrnSaver,
+  libXdamage,
+  libXfixes,
+  libxshmfence,
+  libXtst,
   ffmpeg-full,
   libva,
 }:
@@ -61,12 +66,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     libvdpau
     nss
     pipewire
-    xorg.libX11
-    xorg.libXScrnSaver
-    xorg.libXdamage
-    xorg.libXfixes
-    xorg.libxshmfence
-    xorg.libXtst
+    libX11
+    libXScrnSaver
+    libXdamage
+    libXfixes
+    libxshmfence
+    libXtst
     ffmpeg-full
     libva
   ];
