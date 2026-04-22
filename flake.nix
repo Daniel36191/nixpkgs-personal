@@ -17,7 +17,6 @@
         inherit system;
         config.allowUnfree = true;
       };
-      inherit system;
       agsPkgs = ags.packages.${system};
     in
     {
