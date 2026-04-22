@@ -28,7 +28,7 @@
         receive-midi = pkgs.callPackage ./packages/receive-midi.nix { };
         send-midi = pkgs.callPackage ./packages/send-midi.nix { };
         teamspeak = pkgs.callPackage ./packages/teamspeak.nix { };
-        audio-man = pkgs.callPackage ./packages/audio-man/audio-man.nix {
+        audio-man = pkgs.callPackage ./packages/audio-man.nix {
           agsPkg = agsPkgs.default;
           astal4 = agsPkgs.astal4;
           astal3 = agsPkgs.astal3;
