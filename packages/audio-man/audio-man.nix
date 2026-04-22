@@ -4,18 +4,13 @@
   fetchFromGitHub,
   wrapGAppsHook3,
   gobject-introspection,
-  ags,
+  agsPkg,
+  astal4,
+  astal3,
   libadwaita,
   libsoup_3,
   gjs,
 }:
-
-let
-  system = stdenv.hostPlatform.system;
-  agsPkg = ags.packages.${system}.default;
-  astal4 = ags.packages.${system}.astal4;
-  astal3 = ags.packages.${system}.astal3;
-in
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "audio-man";
