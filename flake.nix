@@ -12,11 +12,12 @@
       ags,
     }:
     let
+      system = "x86_64-linux";
       pkgs = import nixpkgs {
-        system = "x86_64-linux";
+        inherit system;
         config.allowUnfree = true;
       };
-      system = "x86_64-linux";
+      inherit system;
       agsPkgs = ags.packages.${system};
     in
     {
