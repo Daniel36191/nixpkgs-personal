@@ -38,6 +38,7 @@
           astal4 = agsPkgs.astal4;
           astal3 = agsPkgs.astal3;
         };
+        spotiflac = pkgs.callPackage ./packages/spotiflac.nix {};
       };
     };
 }
