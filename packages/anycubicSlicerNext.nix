@@ -3,105 +3,265 @@
   stdenv,
   fetchurl,
   autoPatchelfHook,
-  copyDesktopItems,
-  makeDesktopItem,
   dpkg,
-  makeWrapper,
-
-  libGL,
-  libGLU,
-  zlib,
-  dbus,
+  buildFHSEnv,
+  writeShellScript,
   gtk3,
+  glib,
+  libGL,
+  mesa,
+  cairo,
+  pango,
+  gdk-pixbuf,
+  atk,
+  dbus,
+  libx11,
+  libxext,
+  libxrender,
+  libxtst,
+  libxi,
+  libxfixes,
+  libxcb,
+  libxcomposite,
+  libxcursor,
+  libxdamage,
+  libxrandr,
+  libxscrnsaver,
+  alsa-lib,
+  udev,
+  nspr,
+  nss,
+  expat,
+  cups,
+  at-spi2-atk,
+  at-spi2-core,
+  libdrm,
   wayland,
+  libxkbcommon,
   webkitgtk_4_1,
-  gst_all_1,
-  libsoup_3,
-
-  nanum-gothic-coding,
-  noto-fonts-cjk-sans,
+  openssl,
+  zlib,
+  libpng,
+  libjpeg,
+  freetype,
+  fontconfig,
+  sqlite,
+  curl,
+  vulkan-loader,
+  cacert,
 }:
-stdenv.mkDerivation (finalAttrs: {
-  pname = "AnycubicSlicerNext";
-  version = "1.3.96";
 
-  src = fetchurl {
-    url = "https://cdn-universe-slicer.anycubic.com/prod/dists/noble/main/binary-amd64/develop_${finalAttrs.pname}-${finalAttrs.version}_20260131_153250-Ubuntu_24_04_3_LTS.deb";
-    sha256 = "0r7dabm86ynavzr21w4581la7ak1v5wp0s7c0adsdnx60k1bm2va";
-  };
+let
+  unwrapped = stdenv.mkDerivation (finalAttrs: {
+    pname = "anycubic-slicer-next-unwrapped";
+    version = "1.3.7171";
 
-  nativeBuildInputs = [
-    autoPatchelfHook
-    copyDesktopItems
-    dpkg
-    makeWrapper
-  ];
-  buildInputs = [
-    libGL
-    libGLU
-    zlib
-    dbus
+    src = fetchurl {
+      url = "https://cdn-universe-slicer.anycubic.com/prod/dists/noble/main/binary-amd64/AnycubicSlicerNext-${finalAttrs.version}_20250928_162543-Ubuntu_24_04_2_LTS.deb";
+      hash = "sha256-oB/oY8xO/o+UOXR4K/yy0dAIrjB3ztBl9j24k9ceH5I=";
+    };
+
+    nativeBuildInputs = [
+      autoPatchelfHook
+      dpkg
+    ];
+
+    buildInputs = [
+      gtk3
+      glib
+      libGL
+      mesa
+      cairo
+      pango
+      gdk-pixbuf
+      atk
+      dbus
+      libx11
+      libxext
+      libxrender
+      libxtst
+      libxi
+      libxfixes
+      libxcb
+      libxcomposite
+      libxcursor
+      libxdamage
+      libxrandr
+      libxscrnsaver
+      alsa-lib
+      udev
+      nspr
+      nss
+      expat
+      cups
+      at-spi2-atk
+      at-spi2-core
+      libdrm
+      wayland
+      libxkbcommon
+      webkitgtk_4_1
+      openssl
+      zlib
+      libpng
+      libjpeg
+      freetype
+      fontconfig
+      sqlite
+      curl
+    ];
+
+    dontBuild = true;
+
+    unpackPhase = ''
+      dpkg-deb -x $src unpacked
+    '';
+
+    installPhase = ''
+      runHook preInstall
+
+      install -Dm755 unpacked/usr/bin/AnycubicSlicerNext $out/lib/anycubic-slicer-next/AnycubicSlicerNext
+
+      find unpacked -name '*.so' -o -name '*.so.*' | while read -r f; do
+        install -Dm755 "$f" $out/lib/anycubic-slicer-next/$(basename "$f")
+      done
+
+      mkdir -p $out/share
+      cp -r unpacked/usr/share/AnycubicSlicerNext $out/share/AnycubicSlicerNext
+
+      # Extract icon - just take the first png/svg found (avoids case statement issues)
+      iconFile=$(find unpacked -type f \( -name "*.png" -o -name "*.svg" \) -print -quit 2>/dev/null)
+      if [ -n "$iconFile" ]; then
+        mkdir -p $out/share/icons/hicolor/256x256/apps
+        cp "$iconFile" $out/share/icons/hicolor/256x256/apps/anycubic-slicer-next.png
+      fi
+
+      runHook postInstall
+    '';
+
+    meta = {
+      description = "G-code slicer for Anycubic 3D printers (unwrapped binary)";
+      homepage = "https://wiki.anycubic.com/en/software-and-app/anycubic-slicer-next-linux";
+      license = lib.licenses.unfree;
+      sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
+      platforms = [ "x86_64-linux" ];
+      maintainers = [ ];
+    };
+  });
+
+  runtimeLibs = [
     gtk3
+    glib
+    libGL
+    mesa
+    cairo
+    pango
+    gdk-pixbuf
+    atk
+    dbus
+    libx11
+    libxext
+    libxrender
+    libxtst
+    libxi
+    libxfixes
+    libxcb
+    libxcomposite
+    libxcursor
+    libxdamage
+    libxrandr
+    libxscrnsaver
+    alsa-lib
+    udev
+    nspr
+    nss
+    expat
+    cups
+    at-spi2-atk
+    at-spi2-core
+    libdrm
     wayland
+    libxkbcommon
     webkitgtk_4_1
-    gst_all_1.gstreamer
-    gst_all_1.gst-plugins-base
-    gst_all_1.gst-libav
-    libsoup_3
-
-    nanum-gothic-coding
-    noto-fonts-cjk-sans
+    openssl
+    zlib
+    libpng
+    libjpeg
+    freetype
+    fontconfig
+    sqlite
+    curl
+    vulkan-loader
   ];
 
-  autoPatchelfDirectories = [
-    "$out/lib"
-  ];
-
-  unpackPhase = ''
-    echo "Unpacking"
-    ls -al
-    dpkg-deb -x $src .
+  launcherScript = writeShellScript "anycubic-slicer-next-launcher" ''
+    if [ -d /run/opengl-driver/lib ]; then
+      export LD_LIBRARY_PATH=/run/opengl-driver/lib:$LD_LIBRARY_PATH
+    fi
+  
+    # Fix WebKit login on NVIDIA + Wayland
+    export WEBKIT_DISABLE_DMABUF_RENDERER=1
+    export WEBKIT_DISABLE_COMPOSITING_MODE=1
+    export WEBKIT_FORCE_SANDBOX=0
+  
+    # Fix TLS certs
+    export SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
+    export NIX_SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
+  
+    if [ "''${XDG_SESSION_TYPE:-}" = "wayland" ] && [ -f /run/opengl-driver/share/glvnd/egl_vendor.d/10_nvidia.json ]; then
+      export __GLX_VENDOR_LIBRARY_NAME=mesa
+      export MESA_LOADER_DRIVER_OVERRIDE=zink
+      export GALLIUM_DRIVER=zink
+      if [ -f /run/opengl-driver/share/glvnd/egl_vendor.d/50_mesa.json ]; then
+        export __EGL_VENDOR_LIBRARY_FILENAMES=/run/opengl-driver/share/glvnd/egl_vendor.d/50_mesa.json
+      fi
+    fi
+  
+    exec /lib/anycubic-slicer-next/AnycubicSlicerNext "$@"
   '';
 
-  installPhase = ''
-    echo "installing"
-    ls -al usr/share
-    echo "all"
-    ls -al
-    echo "bin"
-    ls -al usr/bin
-    echo "lib"
-    ls -al usr/lib
-    echo "share"
-    ls -al usr/share/applications
-    mkdir -p $out/bin
-    mkdir -p $out/share/applications
-    mkdir -p $out/lib
-    cp usr/lib/* $out/lib
-    cp usr/bin/${finalAttrs.pname} $out/bin
-    cp usr/share/applications/AnycubicSlicer.desktop $out/share/applications
-  '';
+in
+buildFHSEnv {
+  name = "anycubic-slicer-next";
 
-  postFixup = ''
-  wrapProgram $out/bin/AnycubicSlicerNext \
-    --set QT_QPA_PLATFORM xcb \
-    --set WEBKIT_DISABLE_COMPOSITING_MODE 1 \
-    --prefix LD_LIBRARY_PATH : "$out/lib"
-'';
+  targetPkgs = _: runtimeLibs ++ [ unwrapped cacert ];
 
-  desktopItems = [
-    (makeDesktopItem {
-      name = "anycubic-slicer-next";
-      exec = "anycubic-slicer-next";
-      icon = "anycubic-slicer";
-      desktopName = "Anycubic Slicer Next";
-      comment = "3D printing slicer for Anycubic printers";
-      categories = [ "Graphics" "3DGraphics" ];
-      mimeTypes = [ "model/stl" "model/3mf" ];
-    })
+  extraBwrapArgs = [
+    "--ro-bind"
+    "${unwrapped}/share/AnycubicSlicerNext"
+    "/usr/share/AnycubicSlicerNext"
   ];
+
+  runScript = "${launcherScript}";
+
+  extraInstallCommands = ''
+        mkdir -p $out/share/applications $out/share/icons/hicolor/256x256/apps
+
+        if [ -f ${unwrapped}/share/icons/hicolor/256x256/apps/anycubic-slicer-next.png ]; then
+          cp ${unwrapped}/share/icons/hicolor/256x256/apps/anycubic-slicer-next.png \
+            $out/share/icons/hicolor/256x256/apps/
+        fi
+
+        cat > $out/share/applications/anycubic-slicer-next.desktop << EOF
+    [Desktop Entry]
+    Name=Anycubic Slicer Next
+    Comment=G-code slicer for Anycubic 3D printers
+    Exec=$out/bin/anycubic-slicer-next
+    Icon=anycubic-slicer-next
+    Terminal=false
+    Type=Application
+    Categories=Graphics;3DGraphics;Engineering;
+    StartupNotify=true
+    EOF
+  '';
 
   meta = {
-    platforms = lib.platforms.linux;
+    description = "G-code slicer for Anycubic 3D printers, based on OrcaSlicer";
+    homepage = "https://wiki.anycubic.com/en/software-and-app/anycubic-slicer-next-linux";
+    changelog = "https://wiki.anycubic.com/en/software-and-app/anycubic-slicer-next-linux";
+    license = lib.licenses.unfree;
+    sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
+    platforms = [ "x86_64-linux" ];
+    mainProgram = "anycubic-slicer-next";
+    maintainers = [ ];
   };
-})
+}
