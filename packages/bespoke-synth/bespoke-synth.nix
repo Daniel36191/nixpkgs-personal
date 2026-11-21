@@ -31,7 +31,6 @@
   webkitgtk_4_1,
   python3,
   curl,
-  pcre,
   mount,
   zenity,
   # It is not allowed to distribute binaries with the VST2 SDK plugin without a license
@@ -42,13 +41,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "bespokesynth";
-  version = "3833df302edd3ab89af1a276efc472f81b76fda9";
+  version = "bdf75b994a53cc090eac7e7b098df445b0f3fd18";
 
   src = fetchFromGitHub {
     owner = "BespokeSynth";
     repo = "bespokesynth";
     rev = "${finalAttrs.version}";
-    hash = "sha256-aAtoP3xXN3YOz99bc2+JVQ1azhQSOuYkK8TtR8ha11U=";
+    hash = "sha256-9Ie1s6ZzIJcSUl0+vDKfWH+Ya/3SYk5yYdfjFXGckjg=";
     fetchSubmodules = true;
   };
 
@@ -118,7 +117,6 @@ stdenv.mkDerivation (finalAttrs: {
     libxkbcommon
     xcbutilkeysyms
     xcb-util-cursor
-    pcre
     mount
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
